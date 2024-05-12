@@ -1,6 +1,11 @@
 # aws-v5
-
 - 시작 전 aws 리전 설정을 서울로 꼭 설정
+
+### 전체구성
+- 기존엔 ./gradlew build를 통해 프로젝트를 실행파일로 만들고 ec2 + 엘라스틱 빈스톡을 통해 배포
+- 이번 프로젝트에선 깃허브에 코드 배포 후, ci 서버를 통해 테스트와 빌드를 진행
+- 이때 aws와 ci서버의 환경이 동일해야 함
+- ci서버에서 aws로 배포시 cd를 통해 자동 배포
 
 ### ci/cd
 - 지속적 통합 (continuous integration) / 지속적 배포 (continuous deployment)
