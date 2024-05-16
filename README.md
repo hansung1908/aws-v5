@@ -1,6 +1,13 @@
 # aws-v5
 - 시작 전 aws 리전 설정을 서울로 꼭 설정
 
+### Springboot 2.6.6, JDK 11
+- devtools
+- springweb
+- lombok
+- jpa
+- mysql
+
 ### 전체구성
 - 기존엔 ./gradlew build를 통해 프로젝트를 실행파일로 만들고 ec2 + 엘라스틱 빈스톡을 통해 배포
 - 이번 프로젝트에선 깃허브에 코드 배포 후, ci 서버를 통해 테스트와 빌드를 진행
