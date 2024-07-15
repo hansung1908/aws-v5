@@ -42,3 +42,54 @@
 - 정책은 각 그룹은 맡은 공정일을 수행하기 위해 맡은 공정에 대한 권한의 모음
 - 그룹으로 관리하면 사용자의 그룹만 변경하면 다른 역할을 부여할 수 있어 편리
 - 역할 또한 권한의 모음이지만 사용자에게 부여하는 것이 아닌 서비스(운반책)에 부여
+
+### rds 생성
+- 보안 그룹을 생성, 이름은 security-group-aws-v5
+- 인바운드 규칙은 80번 포트 (http), 22번 포트 (ssh) 오픈
+- 3306번 포트 (mysql db 연결 포트)는 내 ip나 같은 시큐리티 그룹이면 접속 가능하게 설정
+- 같은 시큐리티 그룹 접속 설정은 보안 그룹 생성 후 추가해야 함
+- 좀 더 정확히 하면 ec2는 22, 80번 포트만 rds는 22, 3306포트만 접근 가능하게 보안 그룹을 분리해야 하지만 간단하게 하기 위해 통합
+---
+- 이후 rds를 생성, 이름은 aws-v5-mysql
+- db는 mysql, 템플릿은 프리티어로 설정
+- db 인스턴스 식별자는 이름과 동일하게, 마스터 사용자 이름과 비번은 임의로 지정
+- 보안 그룹은 앞서 만든 그룹으로만 설정
+- 퍼블릭 엑세스를 허용하여 외부에서도 접근 가능하도록 지정
+---
+- 생성한 rds를 로컬 컴퓨터 (mysql workbench)에서 접속, 접속 이름은 aws-v5-mysql
+- hostname은 rds의 엔드포인트, username과 password는 rds의 마스터 사용자 이름과 비번으로 설정
+- 이후 데이터베이스랑 테이블 생성 및 설정
+```text
+-- 데이터베이스 생성
+create database awsdb;
+
+-- 데이터베이스 사용
+use awsdb;
+
+-- Book 테이블 생성
+create table Book(
+	id bigint auto_increment primary key,
+    title varchar(255),
+    content varchar(255),
+    author varchar(255)
+);
+
+-- 인코딩 설정 확인
+show variables like 'c%';
+
+-- 데이터베이스 인코딩을 utf8mb4로 변경
+alter database awsdb character set = 'utf8mb4' collate = 'utf8mb4_general_ci';
+
+-- 테이블 확인
+select * from Book;
+
+-- 시간대 설정 확인
+select @time_zone, now();
+```
+- 시간대를 수정하기 위해선 권한이 필요
+- 이를 위한 파라미터 그룹 생성, 이름은 aws-v5-mysql-group
+- 엔진 유형은 mysql community, 파라미터 그룹 패밀리는 mysql 8.0으로 설정
+- db 파라미터 그룹 유형은 db parameter group으로 설정
+- 생성 후 편집을 통해 time_zone 파라미터 값을 Asia/Seoul로 변경
+- rds에 연결하기 위해 수정 -> 추가 사항 -> db 파라미터 그룹 -> 만들어논 커스텀 파라미터 그룹 설정
+- 해당 과정에서 문제가 없다면 rds 재부팅 후 시간대를 다시 확인했을 때 서울 시간대로 성공적으로 변경 완료
