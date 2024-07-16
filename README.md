@@ -93,3 +93,33 @@ select @time_zone, now();
 - 생성 후 편집을 통해 time_zone 파라미터 값을 Asia/Seoul로 변경
 - rds에 연결하기 위해 수정 -> 추가 사항 -> db 파라미터 그룹 -> 만들어논 커스텀 파라미터 그룹 설정
 - 해당 과정에서 문제가 없다면 rds 재부팅 후 시간대를 다시 확인했을 때 서울 시간대로 성공적으로 변경 완료
+
+### 엘라스틱 빈스톡 생성
+- aws에서 엘라스틱 빈스톡 어플리케이션을 생성
+- 환경 속성에서 RDS_HOSTNAME, RDS_PORT, RDS_DB_NAME, RDS_USERNAME, RDS_PASSWORD 속성 추가
+- 각각 rds 엔드포인트, db 포트번호, db 이름, db 사용자, db 비밀번호를 값으로 입력
+---
+
+##### 로드 밸런서
+- 서버 트래픽을 여러 서버에 분산
+- 로드 밸런서 유형은 alb (application load balancer)로 설정
+- 로드 밸런서 리스너와 프로세스를 통해 라우팅 설정, 여기선 디폴트로 진행
+---
+
+##### 오토 스케일링
+- 서버 트래픽이 많을 경우 자동으로 ec2 서버 증설, 반대로 트래픽이 적을 때는 자동으로 서버 축소
+- 오토 스케일링 환경 유형은 밸런싱된 로드로 설정
+- 오토 스케일링 최소 최대 서버 수는 2 ~ 4대로 설정
+---
+- 롤링 업데이트 배포 정책은 변경 불가로 설정
+- iam 역할 생성, 이름은 aws-elasticbeanstalk-ec2-role
+- 아래의 권한 추가
+```text
+AWSElasticBeanstalkWebTier
+AWSElasticBeanstalkWorkerTier
+AWSElasticBeanstalkMulticontainerDocker
+```
+- elasticbeanstalk에 사용한 iam 역할 하나 더 생성, 이름은 aws-elasticbeanstalk-service-role
+- 구성은 사용 사례에서 elasticbeanstalk을 선택하면 나오는 그대로 진행
+- ec2 키페어도 생성
+- 생성한 역할과 키페어는 서비스 엑세스에서 각자 맞는 위치에 선택
