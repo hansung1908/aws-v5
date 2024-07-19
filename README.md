@@ -173,3 +173,20 @@ AWSElasticBeanstalkMulticontainerDocker
 - ip 주소가 주기적으로 바뀐다는 건 도메인 이름을 지정할 수 없다는 뜻이고 실제로 alb로는 서비스하기 어려움
 - 그래서 추후 https나 패킷 처리는 못하지만 고정 ip는 받을 수 있는 nlb (network load balancer)를 만들어야 함
 - 그럼 클라이언트로부터 맨 처음 요청을 받은 뒤 alb로 넘어가는 방식으로 바꿔 고정 ip로 도메인을 할당받을 수 있음
+
+### github action
+- 깃허브를 통한 배포
+- 먼저 로컬 컴퓨터의 spring 프로젝트를 깃허브에 연결
+```text
+1. 코드를 변경해서 기능을 추가
+2. git push 명령어를 통해 git에 프로젝트 업로드
+3. git에 변경된 코드 반영
+4. ci 서버에 우분투 설치
+5. jdk 설치
+6. git으로부터 코드 다운로드
+7. 코드 테스트
+8. build (실행 파일 생성)
+```
+- 3번에서 4번으로 넘어갈 때 트리거는 .github/workflows/*.yml
+- 해당 yml 파일 내용을 바탕으로 ci 서버에서 4 ~ 8번 과정이 진행
+- 처음 깃허브 배포시 깃허브 프로젝트의 상단바에 actions를 들어가 활성화해야 함
