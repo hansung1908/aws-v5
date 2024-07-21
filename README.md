@@ -214,3 +214,10 @@ java -jar application.jar
 
 - deploy 파일에 AWS_ACCESS_KEY, AWS_SECRET_KEY는 환경 변수로 설정
 - 환경 변수는 깃허브 저장소에서 setting -> secrets and variables -> actions -> repository secrets에서 생성
+
+### 한글 입력 오류 해결
+- db 인코딩 설정 문제로 한글 입력시 오류가 발생할 수 있음
+- aws rds -> 파라미터 그룹에서 생성한 그룹에서 파라미터 편집
+- character_set으로 시작하는 파라미터 값 전부 utf8mb4로 변경
+- 변경 완료후 db 재부팅
+- 하지만 테이블은 인코딩 설정 전에 만들어 진거라 설정이 안먹히므로 drop 후 새로 생성
