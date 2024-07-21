@@ -190,3 +190,27 @@ AWSElasticBeanstalkMulticontainerDocker
 - 3번에서 4번으로 넘어갈 때 트리거는 .github/workflows/*.yml
 - 해당 yml 파일 내용을 바탕으로 ci 서버에서 4 ~ 8번 과정이 진행
 - 처음 깃허브 배포시 깃허브 프로젝트의 상단바에 actions를 들어가 활성화해야 함
+
+### elastic beanstalk 배포
+- 엘라스틱 빈스톡에 *.jar 배포
+- /var/app/current 경로에 /application.jar로 이름 변경후 저장
+- 추가로 해당 폴더 경로에 /procfile도 자동 생성 및 실행
+- procfile에는 해당 스크립트로 구성
+```text
+# 해당 jar 파일을 실행
+java -jar application.jar
+```
+---
+
+- 엘라스틱 빈스톡에 deploy.zip 배포 (이름은 임의로 지정)
+- application.jar, procfile, .ebextensions/00-makeFiles.config으로 구성
+- 00-makeFiles.config에서 /sbin 경로에 /appstart 파일을 생성
+- 리눅스에서 bin이나 sbin에 있는 파일은 모든 경로에서 실행 가능
+- 스크립트에서 mode는 리눅스의 접근 권한 설정과 동일
+- 내용은 java -jar application.jar과 동일
+- procfile 파일에는 config를 통해 만든 appstart 실행
+- procfile은 jar 파일 배포와 같이 자동으로 실행
+---
+
+- deploy 파일에 AWS_ACCESS_KEY, AWS_SECRET_KEY는 환경 변수로 설정
+- 환경 변수는 깃허브 저장소에서 setting -> secrets and variables -> actions -> repository secrets에서 생성
